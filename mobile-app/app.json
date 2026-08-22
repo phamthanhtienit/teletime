@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "TeleTime",
+    "slug": "teletime-mobile-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.teletime.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "TeleTime cần vị trí của bạn để xác nhận bạn đang ở văn phòng khi chấm công."
+      }
+    },
+    "android": {
+      "package": "com.teletime.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "TeleTime cần vị trí của bạn để xác nhận bạn đang ở văn phòng khi chấm công."
+        }
+      ]
+    ]
+  }
+}

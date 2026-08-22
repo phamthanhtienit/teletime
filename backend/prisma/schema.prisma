@@ -1,0 +1,134 @@
+// TeleTime - Prisma schema
+// Chay: npx prisma migrate dev --name init  (sau khi da co DATABASE_URL trong .env)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  role         Role     @default(AGENT)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  attendances        Attendance[]
+  shiftRegistrations ShiftRegistration[]
+  leaveRequests      LeaveRequest[]        @relation("LeaveRequester")
+  reviewedShifts     ShiftRegistration[]   @relation("ShiftReviewer")
+  reviewedLeaves     LeaveRequest[]        @relation("LeaveReviewer")
+
+  @@map("users")
+}
+
+// Danh muc ca lam viec ma cong ty co (VD: Ca sang 08:00-12:00, Ca chieu 13:00-17:00)
+model Shift {
+  id        String   @id @default(uuid())
+  name      String
+  startTime String // dang "HH:mm", VD "08:00"
+  endTime   String // dang "HH:mm", VD "17:00"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  registrations ShiftRegistration[]
+
+  @@map("shifts")
+}
+
+// Agent tu dang ky lam ca nao vao ngay nao, Admin phai duyet
+model ShiftRegistration {
+  id         String        @id @default(uuid())
+  userId     String
+  shiftId    String
+  date       DateTime      @db.Date
+  status     RequestStatus @default(PENDING)
+  reviewedById String?
+  reviewedAt DateTime?
+  note       String?
+  createdAt  DateTime      @default(now())
+
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shift      Shift  @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  reviewedBy User?  @relation("ShiftReviewer", fields: [reviewedById], references: [id])
+
+  @@unique([userId, shiftId, date])
+  @@map("shift_registrations")
+}
+
+// Ban ghi cham cong vao/ra trong ngay
+model Attendance {
+  id     String   @id @default(uuid())
+  userId String
+  date   DateTime @db.Date
+
+  checkInAt  DateTime?
+  checkInLat Float?
+  checkInLng Float?
+  checkInIp  String?
+
+  checkOutAt  DateTime?
+  checkOutLat Float?
+  checkOutLng Float?
+  checkOutIp  String?
+
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("attendances")
+}
+
+// Agent xin nghi phep, Admin duyet
+model LeaveRequest {
+  id        String        @id @default(uuid())
+  userId    String
+  startDate DateTime      @db.Date
+  endDate   DateTime      @db.Date
+  reason    String
+  status    RequestStatus @default(PENDING)
+  reviewedById String?
+  reviewedAt DateTime?
+  createdAt DateTime      @default(now())
+
+  user       User  @relation("LeaveRequester", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User? @relation("LeaveReviewer", fields: [reviewedById], references: [id])
+
+  @@map("leave_requests")
+}
+
+// Cau hinh vi tri van phong + danh sach IP WiFi cong ty duoc phep cham cong
+// (Admin cau hinh qua trang web; MVP dung 1 dong duy nhat cho 1 van phong)
+model OfficeSetting {
+  id            String   @id @default(uuid())
+  name          String   @default("Van phong chinh")
+  latitude      Float
+  longitude     Float
+  radiusMeters  Int      @default(150)
+  allowedIps    String[] // danh sach IP public cua mang WiFi cong ty
+  updatedAt     DateTime @updatedAt
+
+  @@map("office_settings")
+}
