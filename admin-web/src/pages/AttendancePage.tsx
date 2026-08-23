@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/api/client";
 import type { Attendance } from "@/api/types";
 import { formatUsEasternTime } from "@/utils/usTime";
+import { todayVN } from "@/utils/vnDate";
 
 function formatTime(value: string | null) {
   if (!value) return "-";
@@ -9,7 +10,7 @@ function formatTime(value: string | null) {
 }
 
 export default function AttendancePage() {
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(() => todayVN());
   const [records, setRecords] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(true);
 

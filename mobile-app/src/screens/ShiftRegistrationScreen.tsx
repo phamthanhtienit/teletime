@@ -4,10 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { api } from "../api/client";
 import type { Shift, ShiftRegistration } from "../api/types";
 import { vnTimeToUsEastern } from "../utils/usTime";
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayVN } from "../utils/vnDate";
 
 const statusLabel: Record<string, string> = {
   PENDING: "Đang chờ duyệt",
@@ -47,7 +44,7 @@ export default function ShiftRegistrationScreen() {
   async function register(shiftId: string) {
     setSubmittingId(shiftId);
     try {
-      await api.post("/shifts/registrations", { shiftId, date: todayISO() });
+      await api.post("/shifts/registrations", { shiftId, date: todayVN() });
       await loadRegistrations();
       Alert.alert("Đã gửi đăng ký", "Chờ Admin duyệt ca làm hôm nay");
     } catch (err: any) {

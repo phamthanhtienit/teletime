@@ -10,9 +10,16 @@ export const attendanceRouter = Router();
 
 attendanceRouter.use(requireAuth);
 
+/**
+ * Tinh "ngay hom nay" theo GIO VIET NAM (UTC+7 co dinh), khong dung
+ * now.getFullYear()/getMonth()/getDate() (phu thuoc timezone cua he dieu
+ * hanh server - VD VPS mac dinh la UTC). Neu khong quy doi ro UTC+7, nhan
+ * vien cham cong trong khung 00:00-07:00 gio VN se bi ghi nham sang ngay
+ * hom truoc (theo lich UTC), gay lech voi ngay dang ky ca lam.
+ */
 function todayDateOnly(): Date {
-  const now = new Date();
-  return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  const vnNow = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  return new Date(Date.UTC(vnNow.getUTCFullYear(), vnNow.getUTCMonth(), vnNow.getUTCDate()));
 }
 
 /**

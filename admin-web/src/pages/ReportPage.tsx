@@ -3,15 +3,7 @@ import * as XLSX from "xlsx";
 import { api } from "@/api/client";
 import type { Attendance, ShiftRegistration, LeaveRequest } from "@/api/types";
 import { formatUsEasternTime } from "@/utils/usTime";
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function firstDayOfMonthISO() {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
-}
+import { todayVN, firstDayOfMonthVN } from "@/utils/vnDate";
 
 function formatTimeVN(value: string | null) {
   if (!value) return "-";
@@ -41,8 +33,8 @@ function leaveDayCount(startDate: string, endDate: string) {
 }
 
 export default function ReportPage() {
-  const [fromDate, setFromDate] = useState(firstDayOfMonthISO());
-  const [toDate, setToDate] = useState(todayISO());
+  const [fromDate, setFromDate] = useState(firstDayOfMonthVN());
+  const [toDate, setToDate] = useState(todayVN());
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

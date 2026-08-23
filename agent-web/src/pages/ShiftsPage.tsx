@@ -2,10 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "@/api/client";
 import type { Shift, ShiftRegistration } from "@/api/types";
 import { vnTimeToUsEastern } from "@/utils/usTime";
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayVN } from "@/utils/vnDate";
 
 const statusLabel: Record<string, string> = {
   PENDING: "Đang chờ duyệt",
@@ -46,7 +43,7 @@ export default function ShiftsPage() {
     setMessage(null);
     setError(null);
     try {
-      await api.post("/shifts/registrations", { shiftId, date: todayISO() });
+      await api.post("/shifts/registrations", { shiftId, date: todayVN() });
       await loadRegistrations();
       setMessage("Đã gửi đăng ký, chờ Admin duyệt ca làm hôm nay");
     } catch (err: any) {

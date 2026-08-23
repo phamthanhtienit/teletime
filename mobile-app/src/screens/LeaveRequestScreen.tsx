@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Alert } from "r
 import { useFocusEffect } from "@react-navigation/native";
 import { api } from "../api/client";
 import type { LeaveRequest } from "../api/types";
+import { todayVN } from "../utils/vnDate";
 
 const statusLabel: Record<string, string> = {
   PENDING: "Đang chờ duyệt",
@@ -15,13 +16,9 @@ const statusColor: Record<string, string> = {
   REJECTED: "#dc2626",
 };
 
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 export default function LeaveRequestScreen() {
-  const [startDate, setStartDate] = useState(todayISO());
-  const [endDate, setEndDate] = useState(todayISO());
+  const [startDate, setStartDate] = useState(todayVN());
+  const [endDate, setEndDate] = useState(todayVN());
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);

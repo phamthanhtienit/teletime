@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { api } from "@/api/client";
 import type { LeaveRequest } from "@/api/types";
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayVN } from "@/utils/vnDate";
 
 const statusLabel: Record<string, string> = {
   PENDING: "Đang chờ duyệt",
@@ -18,8 +15,8 @@ const statusClass: Record<string, string> = {
 };
 
 export default function LeavePage() {
-  const [startDate, setStartDate] = useState(todayISO());
-  const [endDate, setEndDate] = useState(todayISO());
+  const [startDate, setStartDate] = useState(todayVN());
+  const [endDate, setEndDate] = useState(todayVN());
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
