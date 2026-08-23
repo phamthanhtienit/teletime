@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { Prisma } from "@prisma/client";
 
 export class AppError extends Error {
   status: number;
@@ -24,6 +25,13 @@ export function errorHandler(err: unknown, req: Request, res: Response, next: Ne
 
   if (err instanceof AppError) {
     return res.status(err.status).json({ message: err.message });
+  }
+
+  // Loi vi pham rang buoc unique cua Prisma (VD dang ky trung 1 ca/1 ngay,
+  // xin nghi phep trung, email da ton tai...) - tra ve thong bao tieng Viet
+  // thay vi de loi he thong 500 tho.
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+    return res.status(409).json({ message: "Du lieu nay da ton tai, khong the tao trung lap" });
   }
 
   console.error(err);
