@@ -40,8 +40,10 @@ export default function AttendancePage() {
           <thead>
             <tr>
               <th>Nhân viên</th>
+              <th>Ca làm</th>
               <th>Giờ vào</th>
               <th>Giờ ra</th>
+              <th>Trạng thái</th>
               <th>IP vào</th>
               <th>IP ra</th>
             </tr>
@@ -50,8 +52,20 @@ export default function AttendancePage() {
             {records.map((r) => (
               <tr key={r.id}>
                 <td>{r.user?.fullName}</td>
+                <td>{r.shiftName ?? "-"}</td>
                 <td>{formatTime(r.checkInAt)}</td>
                 <td>{formatTime(r.checkOutAt)}</td>
+                <td>
+                  {!r.checkInAt ? (
+                    "-"
+                  ) : !r.shiftName ? (
+                    <span className="badge">Chưa rõ ca</span>
+                  ) : r.isLate ? (
+                    <span className="badge badge-off">Trễ {r.lateMinutes} phút</span>
+                  ) : (
+                    <span className="badge badge-ok">Đúng giờ</span>
+                  )}
+                </td>
                 <td>{r.checkInIp ?? "-"}</td>
                 <td>{r.checkOutIp ?? "-"}</td>
               </tr>

@@ -28,6 +28,78 @@ async function findOpenAttendance(userId: string) {
   });
 }
 
+type LateInfo = {
+  shiftName: string | null;
+  expectedStartTime: string | null;
+  isLate: boolean;
+  lateMinutes: number;
+};
+
+/**
+ * Tim ca lam DA DUOC DUYET cua 1 nhan vien ung voi 1 ban ghi cham cong.
+ * Uu tien dang ky dung ngay cham cong; neu khong co, thu ngay hom truoc
+ * (truong hop cham cong VAO sau 0h vi den qua tre cho ca dem bat dau tu
+ * hom truoc, VD ca 21:00 nhung 0h30 hom sau moi toi).
+ */
+async function findApprovedRegistration(userId: string, attendanceDate: Date) {
+  const prevDate = new Date(attendanceDate);
+  prevDate.setUTCDate(prevDate.getUTCDate() - 1);
+
+  const regs = await prisma.shiftRegistration.findMany({
+    where: { userId, status: "APPROVED", date: { in: [attendanceDate, prevDate] } },
+    include: { shift: true },
+    orderBy: { date: "desc" }, // uu tien dang ky dung ngay truoc
+  });
+  return regs[0] ?? null;
+}
+
+/**
+ * So sanh gio cham cong VAO thuc te voi gio bat dau ca da duyet de xac dinh
+ * co tre hay khong. Gio ca (HH:mm) duoc hieu la gio Viet Nam (UTC+7, khong
+ * co gio mua he) bat ke may chu dat timezone gi, de tranh sai lech.
+ */
+function computeLateInfo(
+  checkInAt: Date | null,
+  registration: { date: Date; shift: { name: string; startTime: string } } | null
+): LateInfo {
+  if (!registration) {
+    return { shiftName: null, expectedStartTime: null, isLate: false, lateMinutes: 0 };
+  }
+  const [h, m] = registration.shift.startTime.split(":").map(Number);
+  const y = registration.date.getUTCFullYear();
+  const mo = registration.date.getUTCMonth();
+  const d = registration.date.getUTCDate();
+  const expectedStart = new Date(Date.UTC(y, mo, d, h - 7, m, 0, 0));
+
+  if (!checkInAt) {
+    return {
+      shiftName: registration.shift.name,
+      expectedStartTime: expectedStart.toISOString(),
+      isLate: false,
+      lateMinutes: 0,
+    };
+  }
+
+  const diffMinutes = Math.round((checkInAt.getTime() - expectedStart.getTime()) / 60000);
+  return {
+    shiftName: registration.shift.name,
+    expectedStartTime: expectedStart.toISOString(),
+    isLate: diffMinutes > 0,
+    lateMinutes: Math.max(0, diffMinutes),
+  };
+}
+
+async function attachLateInfo<T extends { userId: string; date: Date; checkInAt: Date | null }>(
+  records: T[]
+): Promise<(T & LateInfo)[]> {
+  return Promise.all(
+    records.map(async (r) => {
+      const registration = await findApprovedRegistration(r.userId, r.date);
+      return { ...r, ...computeLateInfo(r.checkInAt, registration) };
+    })
+  );
+}
+
 const locationSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
@@ -65,17 +137,20 @@ async function verifyAtOffice(clientIp: string, latitude: number, longitude: num
 attendanceRouter.get(
   "/today",
   asyncHandler(async (req, res) => {
-    const record = await prisma.attendance.findUnique({
+    let record = await prisma.attendance.findUnique({
       where: { userId_date: { userId: req.user!.sub, date: todayDateOnly() } },
     });
     // Neu hom nay chua co ban ghi, co the do dang lam ca dem (check-in tu
     // hom qua, chua check-out) -> tra ve phien dang mo do de FE hien dung
     // trang thai "da cham vao, chua cham ra" thay vi bao chua cham cong.
     if (!record) {
-      const open = await findOpenAttendance(req.user!.sub);
-      return res.json(open ?? null);
+      record = await findOpenAttendance(req.user!.sub);
     }
-    res.json(record);
+    if (!record) {
+      return res.json(null);
+    }
+    const [enriched] = await attachLateInfo([record]);
+    res.json(enriched);
   })
 );
 
@@ -93,7 +168,7 @@ attendanceRouter.get(
       orderBy: { date: "desc" },
       take: 90,
     });
-    res.json(records);
+    res.json(await attachLateInfo(records));
   })
 );
 
@@ -110,7 +185,7 @@ attendanceRouter.get(
       orderBy: [{ date: "desc" }, { checkInAt: "asc" }],
       take: 500,
     });
-    res.json(records);
+    res.json(await attachLateInfo(records));
   })
 );
 

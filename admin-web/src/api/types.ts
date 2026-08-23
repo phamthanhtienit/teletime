@@ -39,6 +39,10 @@ export interface Attendance {
   checkInIp: string | null;
   checkOutIp: string | null;
   user?: { id: string; fullName: string; email: string };
+  shiftName: string | null;
+  expectedStartTime: string | null;
+  isLate: boolean;
+  lateMinutes: number;
 }
 
 export interface LeaveRequest {
