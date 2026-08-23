@@ -133,24 +133,34 @@ shiftsRouter.post(
   })
 );
 
-// Agent: xem cac lan dang ky ca cua chinh minh; Admin: xem tat ca (loc theo status)
+// Agent: xem cac lan dang ky ca cua chinh minh; Admin: xem tat ca (loc theo
+// status va/hoac khoang ngay ?from=&to=, dung cho bao cao)
 shiftsRouter.get(
   "/registrations",
   asyncHandler(async (req, res) => {
     const isAdmin = req.user!.role === "ADMIN";
-    const statusFilter = typeof req.query.status === "string" ? req.query.status : undefined;
+    const { status, from, to } = req.query;
+    const statusFilter = typeof status === "string" ? status : undefined;
+    const dateFilter =
+      typeof from === "string" || typeof to === "string"
+        ? {
+            ...(typeof from === "string" ? { gte: new Date(from) } : {}),
+            ...(typeof to === "string" ? { lte: new Date(to) } : {}),
+          }
+        : undefined;
 
     const registrations = await prisma.shiftRegistration.findMany({
       where: {
         userId: isAdmin ? undefined : req.user!.sub,
         status: statusFilter as any,
+        date: dateFilter,
       },
       include: {
         shift: true,
         user: { select: { id: true, fullName: true, email: true } },
       },
       orderBy: { date: "desc" },
-      take: 200,
+      take: 2000,
     });
 
     res.json(registrations);

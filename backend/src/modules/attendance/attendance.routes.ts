@@ -172,18 +172,31 @@ attendanceRouter.get(
   })
 );
 
-// Admin: xem/quan ly toan bo bang cham cong (co the loc theo ngay)
+// Admin: xem/quan ly toan bo bang cham cong. Loc theo 1 ngay (?date=) cho
+// Bang cham cong hang ngay, hoac theo khoang ngay (?from=&to=) cho bao cao.
 attendanceRouter.get(
   "/",
   requireRole("ADMIN"),
   asyncHandler(async (req, res) => {
-    const dateQuery = typeof req.query.date === "string" ? new Date(req.query.date) : undefined;
+    const { date, from, to } = req.query;
+
+    let where: any;
+    if (typeof date === "string") {
+      where = { date: new Date(date) };
+    } else if (typeof from === "string" || typeof to === "string") {
+      where = {
+        date: {
+          ...(typeof from === "string" ? { gte: new Date(from) } : {}),
+          ...(typeof to === "string" ? { lte: new Date(to) } : {}),
+        },
+      };
+    }
 
     const records = await prisma.attendance.findMany({
-      where: dateQuery ? { date: dateQuery } : undefined,
+      where,
       include: { user: { select: { id: true, fullName: true, email: true } } },
       orderBy: [{ date: "desc" }, { checkInAt: "asc" }],
-      take: 500,
+      take: 5000,
     });
     res.json(await attachLateInfo(records));
   })

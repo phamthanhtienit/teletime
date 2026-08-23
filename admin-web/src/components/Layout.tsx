@@ -7,6 +7,7 @@ const navItems = [
   { to: "/shifts", label: "Ca làm" },
   { to: "/shift-approvals", label: "Duyệt ca làm" },
   { to: "/leave-approvals", label: "Duyệt nghỉ phép" },
+  { to: "/reports", label: "Xuất báo cáo" },
   { to: "/office-settings", label: "Cấu hình văn phòng" },
 ];
 
@@ -37,9 +38,6 @@ export default function Layout() {
         </nav>
         <div className="sidebar-footer">
           <div className="user-name">{user?.fullName}</div>
-          <NavLink to="/change-password" className="link-button">
-            Đổi mật khẩu
-          </NavLink>
           <button className="link-button" onClick={handleLogout}>
             Đăng xuất
           </button>

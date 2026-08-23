@@ -38,21 +38,29 @@ leaveRouter.post(
   })
 );
 
-// Agent: xem don nghi phep cua chinh minh; Admin: xem tat ca (loc theo status)
+// Agent: xem don nghi phep cua chinh minh; Admin: xem tat ca (loc theo status
+// va/hoac khoang ngay ?from=&to= - lay nhung don CO GIAO voi khoang ngay do,
+// dung cho bao cao)
 leaveRouter.get(
   "/",
   asyncHandler(async (req, res) => {
     const isAdmin = req.user!.role === "ADMIN";
-    const statusFilter = typeof req.query.status === "string" ? req.query.status : undefined;
+    const { status, from, to } = req.query;
+    const statusFilter = typeof status === "string" ? status : undefined;
+
+    const rangeFilter: any = {};
+    if (typeof from === "string") rangeFilter.endDate = { gte: new Date(from) };
+    if (typeof to === "string") rangeFilter.startDate = { lte: new Date(to) };
 
     const leaves = await prisma.leaveRequest.findMany({
       where: {
         userId: isAdmin ? undefined : req.user!.sub,
         status: statusFilter as any,
+        ...rangeFilter,
       },
       include: { user: { select: { id: true, fullName: true, email: true } } },
       orderBy: { createdAt: "desc" },
-      take: 200,
+      take: 1000,
     });
 
     res.json(leaves);

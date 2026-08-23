@@ -9,7 +9,7 @@ import ShiftsPage from "@/pages/ShiftsPage";
 import ShiftApprovalsPage from "@/pages/ShiftApprovalsPage";
 import LeaveApprovalsPage from "@/pages/LeaveApprovalsPage";
 import OfficeSettingsPage from "@/pages/OfficeSettingsPage";
-import ChangePasswordPage from "@/pages/ChangePasswordPage";
+import ReportPage from "@/pages/ReportPage";
 
 export default function App() {
   return (
@@ -31,7 +31,7 @@ export default function App() {
             <Route path="shift-approvals" element={<ShiftApprovalsPage />} />
             <Route path="leave-approvals" element={<LeaveApprovalsPage />} />
             <Route path="office-settings" element={<OfficeSettingsPage />} />
-            <Route path="change-password" element={<ChangePasswordPage />} />
+            <Route path="reports" element={<ReportPage />} />
           </Route>
         </Routes>
       </AuthProvider>
