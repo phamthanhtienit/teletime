@@ -3,6 +3,7 @@ import { View, Text, FlatList, Pressable, StyleSheet, Alert, ActivityIndicator }
 import { useFocusEffect } from "@react-navigation/native";
 import { api } from "../api/client";
 import type { Shift, ShiftRegistration } from "../api/types";
+import { vnTimeToUsEastern } from "../utils/usTime";
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -76,7 +77,10 @@ export default function ShiftRegistrationScreen() {
         >
           <Text style={styles.shiftName}>{shift.name}</Text>
           <Text style={styles.shiftTime}>
-            {shift.startTime} - {shift.endTime}
+            {shift.startTime} - {shift.endTime} (VN)
+          </Text>
+          <Text style={styles.shiftTimeUs}>
+            {vnTimeToUsEastern(shift.startTime)} - {vnTimeToUsEastern(shift.endTime)} (Mỹ - PA)
           </Text>
         </Pressable>
       ))}
@@ -116,6 +120,7 @@ const styles = StyleSheet.create({
   },
   shiftName: { fontWeight: "600" },
   shiftTime: { color: "#6b7280", marginTop: 2 },
+  shiftTimeUs: { color: "#9ca3af", marginTop: 2, fontSize: 12 },
   regRow: {
     flexDirection: "row",
     justifyContent: "space-between",

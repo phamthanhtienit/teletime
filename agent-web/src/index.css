@@ -209,6 +209,10 @@ label {
   color: var(--muted);
   font-size: 13px;
 }
+.shift-time-us {
+  font-size: 12px;
+  opacity: 0.75;
+}
 
 .list {
   display: flex;

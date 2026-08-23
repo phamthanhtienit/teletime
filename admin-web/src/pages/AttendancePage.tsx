@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/api/client";
 import type { Attendance } from "@/api/types";
+import { formatUsEasternTime } from "@/utils/usTime";
 
 function formatTime(value: string | null) {
   if (!value) return "-";
@@ -41,8 +42,10 @@ export default function AttendancePage() {
             <tr>
               <th>Nhân viên</th>
               <th>Ca làm</th>
-              <th>Giờ vào</th>
-              <th>Giờ ra</th>
+              <th>Giờ vào (VN)</th>
+              <th>Giờ vào (Mỹ)</th>
+              <th>Giờ ra (VN)</th>
+              <th>Giờ ra (Mỹ)</th>
               <th>Trạng thái</th>
               <th>IP vào</th>
               <th>IP ra</th>
@@ -54,7 +57,9 @@ export default function AttendancePage() {
                 <td>{r.user?.fullName}</td>
                 <td>{r.shiftName ?? "-"}</td>
                 <td>{formatTime(r.checkInAt)}</td>
+                <td>{formatUsEasternTime(r.checkInAt)}</td>
                 <td>{formatTime(r.checkOutAt)}</td>
+                <td>{formatUsEasternTime(r.checkOutAt)}</td>
                 <td>
                   {!r.checkInAt ? (
                     "-"

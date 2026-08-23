@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/api/client";
 import type { Shift, ShiftRegistration } from "@/api/types";
+import { vnTimeToUsEastern } from "@/utils/usTime";
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -72,7 +73,10 @@ export default function ShiftsPage() {
           >
             <span className="shift-name">{shift.name}</span>
             <span className="shift-time">
-              {shift.startTime} - {shift.endTime}
+              {shift.startTime} - {shift.endTime} (VN)
+            </span>
+            <span className="shift-time shift-time-us">
+              {vnTimeToUsEastern(shift.startTime)} - {vnTimeToUsEastern(shift.endTime)} (Mỹ - PA)
             </span>
           </button>
         ))}

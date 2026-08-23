@@ -1,10 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
 import { api } from "../api/client";
 import type { Attendance } from "../api/types";
 import { useAuth } from "../context/AuthContext";
+import { nowUsEasternTime, nowVnTime } from "../utils/usTime";
 
 function formatTime(value: string | null) {
   if (!value) return "--:--";
@@ -16,6 +17,14 @@ export default function HomeScreen() {
   const [today, setToday] = useState<Attendance | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [clock, setClock] = useState(() => ({ vn: nowVnTime(), us: nowUsEasternTime() }));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setClock({ vn: nowVnTime(), us: nowUsEasternTime() });
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -95,6 +104,17 @@ export default function HomeScreen() {
         <View style={styles.row}>
           <Text style={styles.label}>Giờ ra</Text>
           <Text style={styles.value}>{formatTime(today?.checkOutAt ?? null)}</Text>
+        </View>
+      </View>
+
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <Text style={styles.label}>Giờ Việt Nam (bây giờ)</Text>
+          <Text style={styles.value}>{clock.vn}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Giờ Mỹ - PA (bây giờ)</Text>
+          <Text style={styles.value}>{clock.us}</Text>
         </View>
       </View>
 

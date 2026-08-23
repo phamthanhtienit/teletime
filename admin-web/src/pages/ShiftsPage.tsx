@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "@/api/client";
 import type { Shift } from "@/api/types";
+import { vnTimeToUsEastern } from "@/utils/usTime";
 
 const emptyForm = { name: "", startTime: "", endTime: "" };
 
@@ -130,7 +131,8 @@ export default function ShiftsPage() {
           <thead>
             <tr>
               <th>Tên ca</th>
-              <th>Giờ làm</th>
+              <th>Giờ làm (VN)</th>
+              <th>Giờ làm (Mỹ - PA)</th>
               <th>Trạng thái</th>
               <th></th>
             </tr>
@@ -141,6 +143,9 @@ export default function ShiftsPage() {
                 <td>{shift.name}</td>
                 <td>
                   {shift.startTime} - {shift.endTime}
+                </td>
+                <td>
+                  {vnTimeToUsEastern(shift.startTime)} - {vnTimeToUsEastern(shift.endTime)}
                 </td>
                 <td>
                   <span className={shift.isActive ? "badge badge-ok" : "badge badge-off"}>
@@ -160,7 +165,7 @@ export default function ShiftsPage() {
             ))}
             {shifts.length === 0 && (
               <tr>
-                <td colSpan={4}>Chưa có ca làm nào, thêm mới ở form trên.</td>
+                <td colSpan={5}>Chưa có ca làm nào, thêm mới ở form trên.</td>
               </tr>
             )}
           </tbody>

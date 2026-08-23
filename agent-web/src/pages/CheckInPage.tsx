@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "@/api/client";
 import type { Attendance } from "@/api/types";
 import { useAuth } from "@/context/AuthContext";
+import { nowUsEasternTime, nowVnTime } from "@/utils/usTime";
 
 function formatTime(value: string | null) {
   if (!value) return "--:--";
@@ -35,6 +36,14 @@ export default function CheckInPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [clock, setClock] = useState(() => ({ vn: nowVnTime(), us: nowUsEasternTime() }));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setClock({ vn: nowVnTime(), us: nowUsEasternTime() });
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -111,6 +120,17 @@ export default function CheckInPage() {
         <div className="time-row">
           <span className="time-label">Giờ ra</span>
           <span className="time-value">{formatTime(today?.checkOutAt ?? null)}</span>
+        </div>
+      </div>
+
+      <div className="card time-card">
+        <div className="time-row">
+          <span className="time-label">Giờ Việt Nam (bây giờ)</span>
+          <span className="time-value">{clock.vn}</span>
+        </div>
+        <div className="time-row">
+          <span className="time-label">Giờ Mỹ - PA (bây giờ)</span>
+          <span className="time-value">{clock.us}</span>
         </div>
       </div>
 
