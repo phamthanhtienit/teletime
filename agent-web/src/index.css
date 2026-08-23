@@ -1,0 +1,299 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --border: #e2e4e9;
+  --text: #1f2430;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --danger: #dc2626;
+  --ok: #16a34a;
+  --pending: #d97706;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  width: 100%;
+  background: var(--card);
+  color: var(--text);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Man hinh dang nhap */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.auth-card {
+  background: var(--card);
+  padding: 32px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.auth-card h1 {
+  margin: 0;
+  color: var(--primary);
+}
+.subtitle {
+  color: var(--muted);
+  margin: -6px 0 0;
+  font-size: 14px;
+}
+.auth-card button[type="submit"] {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.auth-card button[type="submit"]:disabled {
+  opacity: 0.5;
+}
+
+/* Khung ung dung: noi dung cuon + thanh tab co dinh duoi */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 12px;
+}
+.page {
+  padding: 20px 18px 12px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.page-loading {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.hello {
+  font-size: 19px;
+  margin: 0;
+}
+.link-button {
+  background: none;
+  color: var(--danger);
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+.time-card {
+  margin-bottom: 20px;
+}
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+.time-label {
+  color: var(--muted);
+}
+.time-value {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.big-button {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.big-button.outline {
+  background: #fff;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+.big-button:disabled {
+  opacity: 0.4;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 20px 0 10px;
+}
+
+.shift-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.shift-button {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.shift-button:disabled {
+  opacity: 0.5;
+}
+.shift-name {
+  font-weight: 600;
+}
+.shift-time {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.list-title {
+  font-weight: 600;
+}
+.list-sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 2px;
+}
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 16px 0;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge-ok {
+  background: #dcfce7;
+  color: var(--ok);
+}
+.badge-off {
+  background: #fee2e2;
+  color: var(--danger);
+}
+.badge-pending {
+  background: #fef3c7;
+  color: var(--pending);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-text {
+  color: var(--danger);
+  font-size: 13px;
+}
+.success-text {
+  color: var(--ok);
+  font-size: 13px;
+}
+
+/* Thanh tab duoi cung, co ho tro vung an toan (notch/home indicator) tren iPhone */
+.tab-bar {
+  display: flex;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  padding-bottom: env(safe-area-inset-bottom);
+  position: sticky;
+  bottom: 0;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 4px 8px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 11px;
+}
+.tab-item.active {
+  color: var(--primary);
+}
+.tab-icon {
+  font-size: 20px;
+}

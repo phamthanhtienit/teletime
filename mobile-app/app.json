@@ -10,7 +10,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.teletime.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "TeleTime cần vị trí của bạn để xác nhận bạn đang ở văn phòng khi chấm công."
+        "NSLocationWhenInUseUsageDescription": "TeleTime cần vị trí của bạn để xác nhận bạn đang ở văn phòng khi chấm công.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -22,7 +23,12 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +40,11 @@
           "locationWhenInUsePermission": "TeleTime cần vị trí của bạn để xác nhận bạn đang ở văn phòng khi chấm công."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "89f75648-223d-4bd7-8a6b-cb665da87b0b"
+      }
+    }
   }
 }
