@@ -5,6 +5,7 @@ import Layout from "@/components/Layout";
 import LoginPage from "@/pages/LoginPage";
 import AttendancePage from "@/pages/AttendancePage";
 import EmployeesPage from "@/pages/EmployeesPage";
+import ShiftsPage from "@/pages/ShiftsPage";
 import ShiftApprovalsPage from "@/pages/ShiftApprovalsPage";
 import LeaveApprovalsPage from "@/pages/LeaveApprovalsPage";
 import OfficeSettingsPage from "@/pages/OfficeSettingsPage";
@@ -25,6 +26,7 @@ export default function App() {
           >
             <Route index element={<AttendancePage />} />
             <Route path="employees" element={<EmployeesPage />} />
+            <Route path="shifts" element={<ShiftsPage />} />
             <Route path="shift-approvals" element={<ShiftApprovalsPage />} />
             <Route path="leave-approvals" element={<LeaveApprovalsPage />} />
             <Route path="office-settings" element={<OfficeSettingsPage />} />

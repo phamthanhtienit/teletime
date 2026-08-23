@@ -9,12 +9,14 @@ export const shiftsRouter = Router();
 
 shiftsRouter.use(requireAuth);
 
-// Danh muc ca lam viec (ai cung xem duoc de chon dang ky)
+// Danh muc ca lam viec: Agent chi thay ca dang bat (isActive) de chon dang ky,
+// Admin thay toan bo (ca ca da tat) de quan ly
 shiftsRouter.get(
   "/",
-  asyncHandler(async (_req, res) => {
+  asyncHandler(async (req, res) => {
+    const isAdmin = req.user!.role === "ADMIN";
     const shifts = await prisma.shift.findMany({
-      where: { isActive: true },
+      where: isAdmin ? undefined : { isActive: true },
       orderBy: { startTime: "asc" },
     });
     res.json(shifts);
@@ -35,6 +37,41 @@ shiftsRouter.post(
     const data = createShiftSchema.parse(req.body);
     const shift = await prisma.shift.create({ data });
     res.status(201).json(shift);
+  })
+);
+
+const updateShiftSchema = z.object({
+  name: z.string().min(1).optional(),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/, "Dinh dang gio HH:mm").optional(),
+  endTime: z.string().regex(/^\d{2}:\d{2}$/, "Dinh dang gio HH:mm").optional(),
+  isActive: z.boolean().optional(),
+});
+
+// Admin: sua thong tin ca lam (ten, gio, bat/tat)
+shiftsRouter.patch(
+  "/:id",
+  requireRole("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const data = updateShiftSchema.parse(req.body);
+
+    const shift = await prisma.shift.findUnique({ where: { id: req.params.id } });
+    if (!shift) throw new AppError("Khong tim thay ca lam", 404);
+
+    const updated = await prisma.shift.update({ where: { id: req.params.id }, data });
+    res.json(updated);
+  })
+);
+
+// Admin: xoa han 1 ca lam (se xoa luon cac dang ky ca lien quan)
+shiftsRouter.delete(
+  "/:id",
+  requireRole("ADMIN"),
+  asyncHandler(async (req, res) => {
+    const shift = await prisma.shift.findUnique({ where: { id: req.params.id } });
+    if (!shift) throw new AppError("Khong tim thay ca lam", 404);
+
+    await prisma.shift.delete({ where: { id: req.params.id } });
+    res.status(204).send();
   })
 );
 
