@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 const navItems = [
   { to: "/", label: "Bảng chấm công", end: true },
   { to: "/employees", label: "Nhân viên" },
+  { to: "/shifts", label: "Ca làm" },
   { to: "/shift-approvals", label: "Duyệt ca làm" },
   { to: "/leave-approvals", label: "Duyệt nghỉ phép" },
   { to: "/office-settings", label: "Cấu hình văn phòng" },
@@ -28,7 +29,9 @@ export default function Layout() {
               key={item.to}
               to={item.to}
               end={item.end}
-              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
             >
               {item.label}
             </NavLink>
