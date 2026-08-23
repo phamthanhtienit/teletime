@@ -15,6 +15,19 @@ function todayDateOnly(): Date {
   return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 }
 
+/**
+ * Ca lam co the la ca dem (VD 21:00 -> 06:00 hom sau), nen "phien cham cong
+ * dang mo" (da check-in, chua check-out) co the thuoc ve ngay hom truoc chu
+ * khong nhat thiet la "hom nay" theo lich. Ham nay tim phien gan nhat con mo
+ * cua 1 nhan vien, bat ke ngay nao, de check-out/xem trang thai cho dung.
+ */
+async function findOpenAttendance(userId: string) {
+  return prisma.attendance.findFirst({
+    where: { userId, checkInAt: { not: null }, checkOutAt: null },
+    orderBy: { date: "desc" },
+  });
+}
+
 const locationSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
@@ -55,6 +68,13 @@ attendanceRouter.get(
     const record = await prisma.attendance.findUnique({
       where: { userId_date: { userId: req.user!.sub, date: todayDateOnly() } },
     });
+    // Neu hom nay chua co ban ghi, co the do dang lam ca dem (check-in tu
+    // hom qua, chua check-out) -> tra ve phien dang mo do de FE hien dung
+    // trang thai "da cham vao, chua cham ra" thay vi bao chua cham cong.
+    if (!record) {
+      const open = await findOpenAttendance(req.user!.sub);
+      return res.json(open ?? null);
+    }
     res.json(record);
   })
 );
@@ -103,6 +123,16 @@ attendanceRouter.post(
 
     await verifyAtOffice(clientIp, latitude, longitude);
 
+    // Neu con phien nao chua check-out (VD ca dem hom truoc), khong cho
+    // check-in ca moi de tranh de sot mai mai 1 ban ghi khong bao gio dong.
+    const openFromBefore = await findOpenAttendance(req.user!.sub);
+    if (openFromBefore) {
+      throw new AppError(
+        "Ban con 1 phien cham cong chua cham ra (co the tu ca truoc). Vui long cham cong RA truoc khi cham VAO ca moi",
+        409
+      );
+    }
+
     const date = todayDateOnly();
     const existing = await prisma.attendance.findUnique({
       where: { userId_date: { userId: req.user!.sub, date } },
@@ -142,19 +172,15 @@ attendanceRouter.post(
 
     await verifyAtOffice(clientIp, latitude, longitude);
 
-    const date = todayDateOnly();
-    const existing = await prisma.attendance.findUnique({
-      where: { userId_date: { userId: req.user!.sub, date } },
-    });
-    if (!existing?.checkInAt) {
-      throw new AppError("Ban chua cham cong vao hom nay", 400);
-    }
-    if (existing.checkOutAt) {
-      throw new AppError("Ban da cham cong ra hom nay roi", 409);
+    // Dong phien cham cong dang mo (co the la cua hom nay hoac hom qua neu
+    // la ca dem), khong chi tim theo ngay hien tai theo lich.
+    const openRecord = await findOpenAttendance(req.user!.sub);
+    if (!openRecord) {
+      throw new AppError("Ban chua cham cong vao hoac da cham cong ra roi", 400);
     }
 
     const record = await prisma.attendance.update({
-      where: { userId_date: { userId: req.user!.sub, date } },
+      where: { id: openRecord.id },
       data: {
         checkOutAt: new Date(),
         checkOutLat: latitude,

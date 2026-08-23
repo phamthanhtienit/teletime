@@ -74,11 +74,15 @@ export default function ShiftsPage() {
   }
 
   async function handleDelete(shift: Shift) {
-    if (!window.confirm(`Xoá hẳn ca "${shift.name}"? Các đăng ký ca liên quan cũng sẽ bị xoá.`)) {
+    if (!window.confirm(`Xoá hẳn ca "${shift.name}"? Chỉ xoá được nếu chưa có ai đăng ký ca này.`)) {
       return;
     }
-    await api.delete(`/shifts/${shift.id}`);
-    await load();
+    try {
+      await api.delete(`/shifts/${shift.id}`);
+      await load();
+    } catch (err: any) {
+      alert(err?.response?.data?.message ?? "Không xoá được ca làm");
+    }
   }
 
   return (
