@@ -135,6 +135,15 @@ label {
   color: var(--danger);
   padding: 6px 0;
   font-size: 14px;
+  text-decoration: none;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.header-actions .link-button:not(:last-child) {
+  color: var(--muted);
 }
 
 .card {

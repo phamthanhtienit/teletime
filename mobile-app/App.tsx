@@ -10,6 +10,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
 import ShiftRegistrationScreen from "./src/screens/ShiftRegistrationScreen";
 import LeaveRequestScreen from "./src/screens/LeaveRequestScreen";
+import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -63,7 +64,14 @@ function RootNavigator() {
       {!user ? (
         <Stack.Screen name="Login" component={LoginScreen} />
       ) : (
-        <Stack.Screen name="Main" component={MainTabs} />
+        <>
+          <Stack.Screen name="Main" component={MainTabs} />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordScreen}
+            options={{ headerShown: true, title: "Đổi mật khẩu" }}
+          />
+        </>
       )}
     </Stack.Navigator>
   );

@@ -42,6 +42,13 @@ button.link-button {
   color: var(--primary);
   padding: 0;
 }
+a.link-button {
+  background: none;
+  color: var(--primary);
+  padding: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 input,
 select {
@@ -126,6 +133,12 @@ label {
   font-size: 13px;
   margin-bottom: 6px;
   color: #cbd5e1;
+}
+.sidebar-footer .link-button {
+  display: inline-block;
+}
+.sidebar-footer .link-button + .link-button {
+  margin-left: 14px;
 }
 
 .content {

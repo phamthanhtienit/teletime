@@ -29,9 +29,7 @@ export default function Layout() {
               key={item.to}
               to={item.to}
               end={item.end}
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
+              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
             >
               {item.label}
             </NavLink>
@@ -39,6 +37,9 @@ export default function Layout() {
         </nav>
         <div className="sidebar-footer">
           <div className="user-name">{user?.fullName}</div>
+          <NavLink to="/change-password" className="link-button">
+            Đổi mật khẩu
+          </NavLink>
           <button className="link-button" onClick={handleLogout}>
             Đăng xuất
           </button>

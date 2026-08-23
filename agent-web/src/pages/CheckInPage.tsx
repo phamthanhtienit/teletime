@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "@/api/client";
 import type { Attendance } from "@/api/types";
 import { useAuth } from "@/context/AuthContext";
@@ -107,9 +108,14 @@ export default function CheckInPage() {
             {new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}
           </p>
         </div>
-        <button className="link-button" onClick={logout}>
-          Đăng xuất
-        </button>
+        <div className="header-actions">
+          <Link className="link-button" to="/change-password">
+            Đổi mật khẩu
+          </Link>
+          <button className="link-button" onClick={logout}>
+            Đăng xuất
+          </button>
+        </div>
       </div>
 
       <div className="card time-card">

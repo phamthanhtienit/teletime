@@ -7,6 +7,7 @@ import CheckInPage from "@/pages/CheckInPage";
 import ShiftsPage from "@/pages/ShiftsPage";
 import LeavePage from "@/pages/LeavePage";
 import HistoryPage from "@/pages/HistoryPage";
+import ChangePasswordPage from "@/pages/ChangePasswordPage";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="shifts" element={<ShiftsPage />} />
             <Route path="leave" element={<LeavePage />} />
             <Route path="history" element={<HistoryPage />} />
+            <Route path="change-password" element={<ChangePasswordPage />} />
           </Route>
         </Routes>
       </AuthProvider>

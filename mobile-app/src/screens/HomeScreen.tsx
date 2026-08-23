@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Alert, ActivityIndicator } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 import { api } from "../api/client";
 import type { Attendance } from "../api/types";
@@ -14,6 +14,7 @@ function formatTime(value: string | null) {
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
+  const navigation = useNavigation<any>();
   const [today, setToday] = useState<Attendance | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -136,6 +137,10 @@ export default function HomeScreen() {
         </Text>
       </Pressable>
 
+      <Pressable style={styles.logout} onPress={() => navigation.navigate("ChangePassword")}>
+        <Text style={styles.linkText}>Đổi mật khẩu</Text>
+      </Pressable>
+
       <Pressable style={styles.logout} onPress={logout}>
         <Text style={styles.logoutText}>Đăng xuất</Text>
       </Pressable>
@@ -173,4 +178,5 @@ const styles = StyleSheet.create({
   buttonOutlineText: { color: "#2563eb" },
   logout: { marginTop: 12, alignItems: "center" },
   logoutText: { color: "#dc2626" },
+  linkText: { color: "#6b7280" },
 });

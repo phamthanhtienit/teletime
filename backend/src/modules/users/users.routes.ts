@@ -96,6 +96,31 @@ usersRouter.patch(
   })
 );
 
+const changeOwnPasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Vui long nhap mat khau hien tai"),
+  newPassword: z.string().min(6, "Mat khau moi toi thieu 6 ky tu"),
+});
+
+// Ai dang nhap cung tu doi duoc mat khau cua chinh minh (Admin lan Agent),
+// bat buoc nhap dung mat khau hien tai truoc de xac thuc.
+usersRouter.patch(
+  "/me/password",
+  asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = changeOwnPasswordSchema.parse(req.body);
+
+    const user = await prisma.user.findUnique({ where: { id: req.user!.sub } });
+    if (!user) throw new AppError("Khong tim thay nguoi dung", 404);
+
+    const ok = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!ok) throw new AppError("Mat khau hien tai khong dung", 401);
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+
+    res.status(204).send();
+  })
+);
+
 // Admin: xoa nhan vien (thuc te chi khoa tai khoan de giu lich su cham cong)
 usersRouter.delete(
   "/:id",
